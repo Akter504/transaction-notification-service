@@ -3,7 +3,7 @@ package ru.java.maryan.api.transactionnotificationservice.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.java.maryan.api.transactionnotificationservice.models.User;
-import ru.java.maryan.api.transactionnotificationservice.repositories.UserRepository;
+import ru.java.maryan.api.transactionnotificationservice.repositories.impl.UserRepository;
 import ru.java.maryan.api.transactionnotificationservice.services.UserService;
 
 import java.util.Optional;

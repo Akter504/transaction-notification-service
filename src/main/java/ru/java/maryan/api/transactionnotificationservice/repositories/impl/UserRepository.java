@@ -1,4 +1,4 @@
-package ru.java.maryan.api.transactionnotificationservice.repositories;
+package ru.java.maryan.api.transactionnotificationservice.repositories.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -59,8 +59,6 @@ public class UserRepository {
     public User save(User user) {
         String sql;
         if (user.getId() == null) {
-//            sql = "INSERT INTO Users(email, phone_number, name_user, surname_user, password_hash) " +
-//                    "VALUES (?, ?, ?, ?, ?) RETURNING ID";
             sql =
             """
             INSERT INTO Users(email, phone_number, name_user, surname_user, password_hash)
@@ -73,8 +71,6 @@ public class UserRepository {
                     user.getSurnameUser(), user.getPasswordHash());
             user.setId(id);
         } else {
-//            sql = "UPDATE Users SET email=?, phone_number=?, name_user=?, surname_user=?,password_hash=?" +
-//                    "WHERE id=?";
             sql =
             """
             UPDATE Users SET email = ?, phone_number = ?, name_user = ?, surname_user = ?,password_hash = ?

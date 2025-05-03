@@ -28,7 +28,10 @@ public class JwtTokenFilterImpl extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         log.info("URI: " + request.getRequestURI());
-        if (request.getRequestURI().startsWith("/api/auth") || request.getRequestURI().startsWith("/api/users")) {
+        if (request.getRequestURI().startsWith("/api/auth")
+                || request.getRequestURI().startsWith("/api/users")
+                || request.getRequestURI().startsWith("/swagger-ui")
+                || request.getRequestURI().startsWith("/v3")) {
             filterChain.doFilter(request, response);
             return;
         }
