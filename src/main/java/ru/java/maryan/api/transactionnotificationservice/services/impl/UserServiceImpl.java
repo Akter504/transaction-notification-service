@@ -26,5 +26,15 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserByPhoneNumber(String phoneNumber) {
         return userRepository.getUserByPhoneNumber(phoneNumber);
     }
+
+    @Override
+    public boolean isUserExist(Long id) {
+        return userRepository.isUserExists(id);
+    }
+
+    @Override
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
 }
 
