@@ -17,6 +17,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
+import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class KafkaConsumerConfig {
     private String autoOffsetReset;
 
     @Bean
-    public ConsumerFactory<String, TransactionRequest> consumerFactory() {
+    public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -46,6 +47,7 @@ public class KafkaConsumerConfig {
         configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
 
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "ru.java.maryan.api.transactionnotificationservice.dto.request");
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "ru.java.maryan.api.transactionnotificationservice.models");
         configProps.put(JsonDeserializer.TYPE_MAPPINGS,
                 "transactionRequest:ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest");
 
@@ -53,8 +55,15 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TransactionRequest> transactionKafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, TransactionRequest> transactionRequestKafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, TransactionRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Transaction> transactionKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Transaction> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

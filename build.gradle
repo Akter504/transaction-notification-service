@@ -36,6 +36,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.5")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.4.5")
 
+    implementation("org.springframework.boot:spring-boot-starter-web:3.4.5")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter:3.3.0")
+    implementation("software.amazon.awssdk:s3:2.31.35")
+    implementation("com.github.librepdf:openpdf:2.0.3")
+
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
     implementation 'io.swagger:swagger-models:1.6.10'
 

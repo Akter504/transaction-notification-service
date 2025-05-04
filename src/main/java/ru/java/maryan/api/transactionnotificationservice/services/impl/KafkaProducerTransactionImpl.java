@@ -11,27 +11,30 @@ import ru.java.maryan.api.transactionnotificationservice.services.KafkaProducerT
 
 @Service
 public class KafkaProducerTransactionImpl implements KafkaProducerTransaction {
-    private final KafkaTemplate<String, TransactionRequest> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     @Value("${spring.kafka.transaction-topic}")
     private String topicIn;
 
     @Autowired
-    public KafkaProducerTransactionImpl(KafkaTemplate<String, TransactionRequest> kafkaTemplate) {
+    public KafkaProducerTransactionImpl(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
-    public void send(TransactionRequest request) {
+    public void send(Object request) {
         try {
-            kafkaTemplate.send(
-                    topicIn,
-                    request.getTransactionId().toString(),
-                    request
-            );
+            switch (request) {
+                case Transaction transaction ->
+                    kafkaTemplate.send(topicIn, transaction.getId().toString(), transaction);
+                case TransactionRequest txRequest ->
+                    kafkaTemplate.send(topicIn, txRequest.getTransactionId().toString(), txRequest);
+                default ->
+                    throw new IllegalArgumentException("Unsupported message type: " + request.getClass());
+            }
         } catch (Exception e) {
             throw new KafkaProducerException(
                     topicIn,
-                    request.getTransactionId(),
+                    request.getClass(),
                     request,
                     "Thread interrupted while sending transaction to Kafka",
                     e
@@ -40,17 +43,20 @@ public class KafkaProducerTransactionImpl implements KafkaProducerTransaction {
     }
 
     @Override
-    public void send(TransactionRequest request, String topic) {
+    public void send(Object request, String topic) {
         try {
-            kafkaTemplate.send(
-                    topic,
-                    request.getTransactionId().toString(),
-                    request
-            );
+            switch (request) {
+                case Transaction transaction ->
+                        kafkaTemplate.send(topic, transaction.getId().toString(), transaction);
+                case TransactionRequest txRequest ->
+                        kafkaTemplate.send(topic, txRequest.getTransactionId().toString(), txRequest);
+                default ->
+                        throw new IllegalArgumentException("Unsupported message type: " + request.getClass());
+            }
         } catch (Exception e) {
             throw new KafkaProducerException(
                     topic,
-                    request.getTransactionId(),
+                    request.getClass(),
                     request,
                     "Thread interrupted while sending transaction to Kafka",
                     e

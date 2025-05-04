@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
 import ru.java.maryan.api.transactionnotificationservice.dto.response.TransactionResponse;
+import ru.java.maryan.api.transactionnotificationservice.models.Enums.TransactionStatus;
 import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
 import ru.java.maryan.api.transactionnotificationservice.services.KafkaProducerTransaction;
 import ru.java.maryan.api.transactionnotificationservice.services.TransactionService;
@@ -31,12 +32,12 @@ public class TransactionController {
     public ResponseEntity<TransactionResponse> createTransaction(@Validated @RequestBody TransactionRequest request) {
         UUID transactionId = UUID.randomUUID();
         request.setTransactionId(transactionId);
-        request.setStatus(Transaction.TransactionStatus.PENDING);
+        request.setStatus(TransactionStatus.PENDING);
 
         kafkaProducer.send(request);
         TransactionResponse transactionResponse = TransactionResponse.builder()
                 .transactionId(transactionId)
-                .status(Transaction.TransactionStatus.PENDING)
+                .status(TransactionStatus.PENDING)
                 .build();
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionResponse);
     }

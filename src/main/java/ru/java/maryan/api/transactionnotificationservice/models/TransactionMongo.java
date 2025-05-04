@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import ru.java.maryan.api.transactionnotificationservice.models.Enums.TransactionStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,10 +13,6 @@ import java.util.UUID;
 @Setter
 @Document
 public class TransactionMongo {
-    public enum TransactionStatus {
-        PENDING, SUCCESS, FAILED
-    }
-
     @Id
     private UUID id;
     private Long fromAccountId;
