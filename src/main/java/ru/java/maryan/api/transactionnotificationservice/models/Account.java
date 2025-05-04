@@ -16,8 +16,7 @@ public class Account {
 
     public enum AccountType {
         DEBIT,
-        CREDIT,
-        SAVING
+        SAVINGS
     }
 
     private Long id;

@@ -14,14 +14,14 @@ CREATE INDEX idx_users_mail ON Users(email);
 
 --Accounts
 CREATE TYPE currency_type AS ENUM ('USD', 'EUR', 'RUB');
-CREATE TYPE account_type AS ENUM ('DEBIT', 'CREDIT', 'SAVINGS');
+CREATE TYPE account_type AS ENUM ('DEBIT', 'SAVINGS');
 
 CREATE TABLE IF NOT EXISTS Accounts (
     id bigserial PRIMARY KEY,
     balance bigint DEFAULT 0 CHECK (balance >= 0),
     currency currency_type NOT NULL,
     type account_type NOT NULL,
-    created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+    created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id bigint NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Users ON DELETE CASCADE
 );

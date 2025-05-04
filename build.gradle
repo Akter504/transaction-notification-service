@@ -28,13 +28,27 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+
     implementation 'org.postgresql:postgresql:42.7.2'
+    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.4.5")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.4.5")
+
     implementation("org.springframework.boot:spring-boot-starter-jdbc:3.4.5")
     implementation("org.springframework.boot:spring-boot-starter-validation:3.4.5")
-    compileOnly 'org.projectlombok:lombok'
+
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
+    implementation 'io.swagger:swagger-models:1.6.10'
+
+    implementation("org.springframework.kafka:spring-kafka:3.3.5")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.19.0")
+
     implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+
     implementation 'com.auth0:java-jwt:4.2.0'
+
     annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

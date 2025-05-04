@@ -51,4 +51,6 @@ public class AuthController {
         TokenResponse token = loginService.login(user, password);
         return ResponseEntity.ok(token);
     }
+
+    // ToDO LoginResponse(String token, List<AccountResponse>)
 }
