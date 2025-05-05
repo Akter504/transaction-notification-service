@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
+import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
 import ru.java.maryan.api.transactionnotificationservice.services.KafkaConsumer;
 import ru.java.maryan.api.transactionnotificationservice.services.KafkaProducerTransaction;
 import ru.java.maryan.api.transactionnotificationservice.services.TransactionService;
@@ -30,11 +31,11 @@ public class KafkaConsumerTransaction implements KafkaConsumer {
     }
 
     @KafkaListener(topics = "${spring.kafka.transaction-topic}", groupId = "${spring.kafka.group-transaction}",
-            containerFactory = "transactionKafkaListenerContainerFactory")
-    @Override
+            containerFactory = "transactionRequestKafkaListenerContainerFactory")
     public void processTransaction(TransactionRequest transactionRequest) {
-        transactionService.createTransaction(transactionRequest);
-        kafkaProducerTransaction.send(transactionRequest, mongoTopic);
+        Transaction transaction = transactionService.createTransaction(transactionRequest);
+        kafkaProducerTransaction.send(transaction, mongoTopic);
+        kafkaProducerTransaction.send(transaction, receiptsTopic);
 //        kafkaProducerTransaction.send(transactionRequest, notifyTopic);
 //        kafkaProducerTransaction.send(transactionRequest, redisTopic);
     }

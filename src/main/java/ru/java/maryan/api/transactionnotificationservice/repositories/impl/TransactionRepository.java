@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.java.maryan.api.transactionnotificationservice.models.Enums.TransactionStatus;
 import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
+import ru.java.maryan.api.transactionnotificationservice.models.User;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -25,7 +29,7 @@ public class TransactionRepository {
             transaction.setId(UUID.fromString(rs.getString("id")));
             transaction.setFromAccountId(rs.getLong("from_account_id"));
             transaction.setToAccountId(rs.getLong("to_account_id"));
-            transaction.setStatus(Transaction.TransactionStatus.valueOf(rs.getString("status")));
+            transaction.setStatus(TransactionStatus.valueOf(rs.getString("status")));
             transaction.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
             transaction.setComment(rs.getString("comment"));
             transaction.setAmount(rs.getLong("amount"));
@@ -44,14 +48,14 @@ public class TransactionRepository {
             sql =
                     """
                     INSERT INTO Transactions 
-                        (id, from_account_id, to_account_id, amount, status,  comment)
+                        (id, from_account_id, to_account_id, amount, status, created_at, comment)
                     VALUES 
-                        (?, ?, ?, ?, ?::transaction_status,  ?)
+                        (?, ?, ?, ?, ?::transaction_status, ?, ?)
                     """;
             try{
                 jdbcTemplate.update(sql,
                     transaction.getId(), transaction.getFromAccountId(), transaction.getToAccountId(),
-                    transaction.getAmount(), transaction.getStatus().name(),
+                    transaction.getAmount(), transaction.getStatus().name(), transaction.getCreatedAt(),
                     transaction.getComment());
             } catch (Exception e) {
                 log.error(e.toString());
@@ -60,7 +64,7 @@ public class TransactionRepository {
             sql =
                     """
                     UPDATE transactions SET from_account_id = ?, to_account_id = ?, amount = ?, status = ?::transaction_status, 
-                        comment = ?
+                         comment = ?
                     WHERE id = ?
                     """;
             try {

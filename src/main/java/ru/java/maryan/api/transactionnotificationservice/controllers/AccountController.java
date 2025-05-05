@@ -1,5 +1,6 @@
 package ru.java.maryan.api.transactionnotificationservice.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import ru.java.maryan.api.transactionnotificationservice.services.AccountService
 @Validated
 @RestController
 @RequestMapping("/api/account")
+@Slf4j
 public class AccountController {
     private final AccountService accountService;
 
@@ -26,6 +28,8 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<AccountResponse> createAccount(@Validated @RequestBody AccountRequest request) {
+        log.info("ACCOUNT ID: " + request.getUserId());
+        log.info("CURRENCY ACCOUNT: " + request.getCurrencyType());
         Account account = accountService.createAccount(request);
         AccountResponse response = AccountResponse.builder()
                 .id(account.getId())

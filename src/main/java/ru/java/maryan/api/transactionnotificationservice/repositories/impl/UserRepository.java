@@ -82,4 +82,14 @@ public class UserRepository {
         }
         return user;
     }
+
+    public Optional<User> getUserById(Long userId) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try {
+            List<User> users = jdbcTemplate.query(sql, userRowMapper, userId);
+            return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
 }

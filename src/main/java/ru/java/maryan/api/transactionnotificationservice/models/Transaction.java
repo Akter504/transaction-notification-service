@@ -2,6 +2,7 @@ package ru.java.maryan.api.transactionnotificationservice.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.java.maryan.api.transactionnotificationservice.models.Enums.TransactionStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,10 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Transaction {
-    public enum TransactionStatus {
-        PENDING, SUCCESS, FAILED
-    }
-
     private UUID id;
     private Long fromAccountId;
     private Long toAccountId;

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
+import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
 import ru.java.maryan.api.transactionnotificationservice.services.KafkaConsumer;
 import ru.java.maryan.api.transactionnotificationservice.services.KafkaProducerTransaction;
 import ru.java.maryan.api.transactionnotificationservice.services.TransactionMongoService;
@@ -21,8 +22,7 @@ public class KafkaConsumerMongo implements KafkaConsumer {
 
     @KafkaListener(topics = "${spring.kafka.transaction-mongo-topic}", groupId = "${spring.kafka.group-transaction}",
             containerFactory = "transactionKafkaListenerContainerFactory")
-    @Override
-    public void processTransaction(TransactionRequest transactionRequest) {
-        transactionMongoService.createTransaction(transactionRequest);
+    public void processTransaction(Transaction transaction) {
+        transactionMongoService.createTransaction(transaction);
     }
 }
