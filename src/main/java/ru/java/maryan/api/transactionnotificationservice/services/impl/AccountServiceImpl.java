@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.AccountRequest;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
+import ru.java.maryan.api.transactionnotificationservice.dto.response.AccountResponse;
 import ru.java.maryan.api.transactionnotificationservice.models.Account;
 import ru.java.maryan.api.transactionnotificationservice.models.Enums.CurrencyType;
 import ru.java.maryan.api.transactionnotificationservice.models.User;
@@ -14,7 +15,9 @@ import ru.java.maryan.api.transactionnotificationservice.repositories.impl.Accou
 import ru.java.maryan.api.transactionnotificationservice.repositories.impl.UserRepository;
 import ru.java.maryan.api.transactionnotificationservice.services.AccountService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -30,7 +33,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account createAccount(AccountRequest request) {
         Account account = new Account();
-        account.setBalance(request.getBalance());
+        Long balance = request.getBalance() == null
+                ? 0
+                : request.getBalance();
+        account.setBalance(balance);
         account.setUserId(request.getUserId());
         account.setCurrency(request.getCurrencyType());
 
@@ -74,6 +80,11 @@ public class AccountServiceImpl implements AccountService {
                         HttpStatus.NOT_FOUND,
                         "User not found: user_id = " + account.getUserId().toString()
                 ));
+    }
+
+    @Override
+    public List<Account> findAccountsByUserId(Long userId) {
+        return accountRepository.getAccountsByUserId(userId).orElse(null);
     }
 
 

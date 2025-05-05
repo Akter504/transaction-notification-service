@@ -92,4 +92,9 @@ public class UserRepository {
             return Optional.empty();
         }
     }
+
+    public void deleteUser(Long userId) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sql, userId);
+    }
 }

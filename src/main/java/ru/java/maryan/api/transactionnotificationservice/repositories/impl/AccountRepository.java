@@ -84,4 +84,17 @@ public class AccountRepository {
             return Optional.empty();
         }
     }
+
+    public Optional<List<Account>> getAccountsByUserId(Long userId) {
+        String sql =
+                """
+                SELECT * FROM Accounts WHERE user_id = ?     
+                """;
+        try {
+            List<Account> accounts = jdbcTemplate.query(sql, accountRowMapper, userId);
+            return accounts.isEmpty() ? Optional.empty() : Optional.of(accounts);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
 }

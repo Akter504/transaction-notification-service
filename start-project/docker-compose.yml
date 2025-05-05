@@ -160,6 +160,47 @@ services:
       timeout: 5s
       retries: 3
 
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    ports:
+      - "9187:9187"
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      - postgres
+
+  mongodb-exporter:
+    image: bitnami/mongodb-exporter
+    ports:
+      - "9216:9216"
+    environment:
+      MONGODB_URI: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongo:27017/admin"
+      MONGODB_EXPORTER_COLLECTOR_TOPOLOGY: "false"
+    depends_on:
+      - mongo
+
+  kafka-exporter:
+    image: danielqsj/kafka-exporter
+    ports:
+      - "9308:9308"
+    environment:
+      KAFKA_SERVER: "broker:9092"
+    depends_on:
+      - broker
+
+  node_exporter:
+    image: prom/node-exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+
+
 volumes:
   mongo_data:
   redis_data:
