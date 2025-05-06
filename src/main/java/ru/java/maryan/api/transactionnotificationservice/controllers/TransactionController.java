@@ -1,44 +1,34 @@
 package ru.java.maryan.api.transactionnotificationservice.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.TransactionRequest;
 import ru.java.maryan.api.transactionnotificationservice.dto.response.TransactionResponse;
-import ru.java.maryan.api.transactionnotificationservice.models.Enums.TransactionStatus;
-import ru.java.maryan.api.transactionnotificationservice.models.Transaction;
-import ru.java.maryan.api.transactionnotificationservice.services.KafkaProducerTransaction;
-import ru.java.maryan.api.transactionnotificationservice.services.TransactionService;
 
-import java.util.UUID;
-
-@Validated
-@RestController
-@RequestMapping("/api/transaction")
-public class TransactionController {
-    private final KafkaProducerTransaction kafkaProducer;
-
-    @Autowired
-    public TransactionController(KafkaProducerTransaction kafkaProducer) {
-        this.kafkaProducer = kafkaProducer;
-    }
-
+@Tag(
+        name = "Transaction Controller",
+        description = "Manages transaction creation and Kafka publishing"
+)
+public interface TransactionController {
+    @Operation(
+            summary = "Create new transaction",
+            description = "Creates a transaction and sends it to Kafka",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "202",
+                            description = "Transaction accepted",
+                            content = @Content(schema = @Schema(implementation = TransactionResponse.class))
+                    ),
+                    @ApiResponse(responseCode = "400", description = "Invalid request"),
+                    @ApiResponse(responseCode = "500", description = "Internal error")
+            }
+    )
     @PostMapping
-    public ResponseEntity<TransactionResponse> createTransaction(@Validated @RequestBody TransactionRequest request) {
-        UUID transactionId = UUID.randomUUID();
-        request.setTransactionId(transactionId);
-        request.setStatus(TransactionStatus.PENDING);
-
-        kafkaProducer.send(request);
-        TransactionResponse transactionResponse = TransactionResponse.builder()
-                .transactionId(transactionId)
-                .status(TransactionStatus.PENDING)
-                .build();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(transactionResponse);
-    }
+    ResponseEntity<TransactionResponse> createTransaction(@RequestBody TransactionRequest request);
 }

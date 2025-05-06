@@ -1,39 +1,42 @@
 package ru.java.maryan.api.transactionnotificationservice.controllers;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.AccountRequest;
 import ru.java.maryan.api.transactionnotificationservice.dto.response.AccountResponse;
-import ru.java.maryan.api.transactionnotificationservice.models.Account;
-import ru.java.maryan.api.transactionnotificationservice.services.AccountService;
 
-@Validated
-@RestController
-@RequestMapping("/api/account")
-@Slf4j
-public class AccountController {
-    private final AccountService accountService;
-
-    @Autowired
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
+@Tag(
+        name = "Account Controller",
+        description = "Endpoints for account management"
+)
+public interface AccountController {
+    @Operation(
+            summary = "Create account",
+            description = "Creates a new account for the user",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Account successfully created",
+                            content = @Content(schema = @Schema(implementation = AccountResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content
+                    )
+            }
+    )
     @PostMapping
-    public ResponseEntity<AccountResponse> createAccount(@Validated @RequestBody AccountRequest request) {
-        log.info("ACCOUNT ID: " + request.getUserId());
-        log.info("CURRENCY ACCOUNT: " + request.getCurrencyType());
-        Account account = accountService.createAccount(request);
-        AccountResponse response = AccountResponse.builder()
-                .id(account.getId())
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+    ResponseEntity<AccountResponse> createAccount(@RequestBody AccountRequest request);
 }

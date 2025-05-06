@@ -8,12 +8,15 @@ import ru.java.maryan.api.transactionnotificationservice.models.Account;
 import ru.java.maryan.api.transactionnotificationservice.models.Enums.CurrencyType;
 import ru.java.maryan.api.transactionnotificationservice.models.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountService {
     Account createAccount(AccountRequest request);
 
     Account findAccountByUserPhoneNumber(TransactionRequest transactionRequest);
+    User findUserByAccountId(Long fromAccountId);
+    List<Account> findAccountsByUserId(Long id);
 
     void debit(Long fromAccountId,
                @NotBlank(message = "The amount cannot be empty.") @Min(value = 1, message = "The amount is too small(min 1)") Long amount,
@@ -21,6 +24,4 @@ public interface AccountService {
                 Account toAccount);
 
     void updateAccount(Account toAccount);
-
-    User findUserByAccountId(Long fromAccountId);
 }

@@ -1,56 +1,65 @@
 package ru.java.maryan.api.transactionnotificationservice.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import ru.java.maryan.api.transactionnotificationservice.dto.request.LoginRequest;
-import ru.java.maryan.api.transactionnotificationservice.dto.response.TokenResponse;
-import ru.java.maryan.api.transactionnotificationservice.exceptions.AuthException;
-import ru.java.maryan.api.transactionnotificationservice.models.User;
-import ru.java.maryan.api.transactionnotificationservice.services.LoginService;
-import ru.java.maryan.api.transactionnotificationservice.services.UserService;
+import ru.java.maryan.api.transactionnotificationservice.dto.response.LoginResponse;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
-@Validated
-@RestController
-@RequestMapping("/api/auth")
-public class AuthController {
-    private final UserService userService;
-    private final LoginService loginService;
-
-    @Autowired
-    public AuthController(UserService userService, LoginService loginService) {
-        this.userService = userService;
-        this.loginService = loginService;
-    }
-
+@Tag(
+        name = "Authentication Controller",
+        description = "Endpoints for user login by email or phone"
+)
+public interface AuthController {
+    @Operation(
+            summary = "Login by email",
+            description = "Authenticates a user using their email and password",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Login successful",
+                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content
+                    )
+            }
+    )
     @PostMapping("/login-by-email")
-    public ResponseEntity<TokenResponse> loginByEmail(
-            @Validated(LoginRequest.EmailGroup.class) @RequestBody LoginRequest request) {
-        return processLogin(() -> userService.findUserByEmail(request.getEmail()),
-                request.getPassword());
-    }
+    ResponseEntity<LoginResponse> loginByEmail(LoginRequest request);
 
+    @Operation(
+            summary = "Login by phone",
+            description = "Authenticates a user using their phone number and password",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Login successful",
+                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = @Content
+                    )
+            }
+    )
     @PostMapping("/login-by-phone")
-    public ResponseEntity<TokenResponse> loginByPhone(
-            @Validated(LoginRequest.PhoneGroup.class) @RequestBody LoginRequest request) {
-        return processLogin(() -> userService.findUserByPhoneNumber(request.getPhoneNumber()),
-                request.getPassword());
-    }
-
-    private ResponseEntity<TokenResponse> processLogin(Supplier<Optional<User>> userSupplier,
-                                                       String password) {
-        User user = userSupplier.get()
-                .orElseThrow(() -> new AuthException("Invalid credentials"));
-        TokenResponse token = loginService.login(user, password);
-        return ResponseEntity.ok(token);
-    }
-
-    // ToDO LoginResponse(String token, List<AccountResponse>)
+    ResponseEntity<LoginResponse> loginByPhone(LoginRequest request);
 }
