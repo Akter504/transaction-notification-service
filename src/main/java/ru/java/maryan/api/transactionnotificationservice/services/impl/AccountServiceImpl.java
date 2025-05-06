@@ -49,6 +49,7 @@ public class AccountServiceImpl implements AccountService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "User not found with phone number: " + transactionRequest.getToUserPhoneNumber()
+                        + " " + transactionRequest.getFromAccountId()
                 ));
         return accountRepository.getAccountByUserId(user.getId(), transactionRequest.getCurrencyType())
                 .orElseThrow(() -> new ResponseStatusException(
