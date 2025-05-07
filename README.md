@@ -87,7 +87,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ```bash
 # Клонируем репозиторий
-git clone https://github.com/your-username/transaction-notification-service.git
+git clone https://github.com/Akter504/transaction-notification-service.git
 
 # Запуск
 cd transaction-notification-service/start-project
